@@ -13,34 +13,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMBODY_H_
-#define PARAMBODY_H_
+#ifndef PARAMTRAITS_H_
+#define PARAMTRAITS_H_
 
 #include <cstddef>
 #include <cstdint>
-#include <memory>
-#include <ParamTraits.h>
+#include <functional>
 
-class ParamBody
+struct ParamTraits
 {
-public:
-  ParamBody(const ParamTraits& paramTraits);
+  bool     isReadable;
+  bool     isWriteable;
+  uint16_t address;
+  uint8_t  size;
+  float    factor;
+  float    min;
+  float    max;
+  std::function<int32_t(float, float)> toRaw;
+  std::function<float(int32_t, float)> fromRaw;
 
-  uint16_t getParamAddress();
-  uint8_t  getParamSize();
-
-  int32_t getRawValue();
-  float   getValue();
-  void    setRawValue(int32_t rawValue);
-  void    setValue(float value);
-
-  bool isReadable();
-  bool isWriteable();
-
-private:
-  float       value;
-  ParamTraits paramTraits;
+  static int32_t multiplyByFactor    (float value, float factor);
+  static float   divideByFactor    (int32_t value, float factor);
+  static int32_t pumpValueToRaw      (float value, float factor);
+  static float   pumpValueFromRaw  (int32_t value, float factor);
+  static float   divideLSBbyFactor(int32_t value, float factor);
 };
 
-
-#endif // PARAMBODY_H_
+#endif // PARAMTRAITS_H_

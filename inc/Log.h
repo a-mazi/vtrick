@@ -13,17 +13,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef LOG_H_
+#define LOG_H_
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <stdio.h>
 
-class ParamWriter
-{
-public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
-};
+#if LOGLEVEL>=1
+#define LOGE(...) printf("ERROR "); printf(__VA_ARGS__);
+#else
+#define LOGE(...)
+#endif
 
-#endif // PARAMWRITER_H_
+#if LOGLEVEL>=2
+#define LOGW(...) printf("WARNING "); printf(__VA_ARGS__);
+#else
+#define LOGW(...)
+#endif
+
+#if LOGLEVEL>=3
+#define LOGI(...) printf("INFO "); printf(__VA_ARGS__);
+#else
+#define LOGI(...)
+#endif
+
+#if LOGLEVEL>=4
+#define LOGD(...) printf("DEBUG "); printf(__VA_ARGS__);
+#else
+#define LOGD(...)
+#endif
+
+#endif // LOG_H_

@@ -13,17 +13,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef KETTLEPORT_H_
+#define KETTLEPORT_H_
 
+#include <string>
 #include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <IoStatus.h>
+#include <SerialPort.h>
 
-class ParamWriter
+class KettlePort
 {
 public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  enum class Status;
+
+  KettlePort();
+  ~KettlePort() = default;
+
+  void attachSerial(std::shared_ptr<SerialPort> serial);
+  void detachSerial();
+
+  void open();
+  void close();
+  IoStatus read(void* buffer, size_t dataSize, int timeoutmsec = 0);
+  IoStatus write(const void* buffer, size_t dataSize);
+
+private:
+  std::shared_ptr<SerialPort> serial;
+  static constexpr int readRetryIntervalmsec = 100;
+  std::shared_ptr<char[]> internalBuffer;
+  size_t internalBufferSize;
 };
 
-#endif // PARAMWRITER_H_
+#endif // KETTLEPORT_H_

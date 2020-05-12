@@ -13,17 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef ISPOWEROFTWO_H_
+#define ISPOWEROFTWO_H_
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+static constexpr bool isPowerOfTwo(uint32_t value){return (value != 0) && ((value & (value - 1)) == 0);};
 
-class ParamWriter
-{
-public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
-};
-
-#endif // PARAMWRITER_H_
+#endif // ISPOWEROFTWO_H_

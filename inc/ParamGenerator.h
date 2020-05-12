@@ -13,17 +13,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef PARAMGENERATOR_H_
+#define PARAMGENERATOR_H_
 
 #include <memory>
+#include <ParamId.h>
 #include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <ParamDefinition.h>
+#include <ControllerId.h>
+#include <ControllerConfig.h>
 
-class ParamWriter
+class ParamGenerator
 {
 public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  ParamGenerator(const ParamDefinition& paramDefinition);
+
+  bool isControllerIdAvailable(ControllerId controllerId) const;
+  bool isParamIdAvailable(ParamId paramId) const;
+
+  bool setControllerId(ControllerId controllerId);
+  std::shared_ptr<ParamBody> generate(ParamId paramId) const;
+
+private:
+  const ParamDefinition& paramDefinition;
+  ControllerId controllerId;
 };
 
-#endif // PARAMWRITER_H_
+#endif // PARAMGENERATOR_H_

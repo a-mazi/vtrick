@@ -1,29 +1,72 @@
+/* Copyright © Artur Maziarek MMXX
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 #include <ParamBody.h>
+#include <Log.h>
 
-ParamBody::ParamBody(uint32_t paramAddress_, size_t dataSize_) :
-                    paramAddress{paramAddress_}, dataSize{dataSize_}
+ParamBody::ParamBody(const ParamTraits& paramTraits_):
+  value{0}, paramTraits{paramTraits_}
 {
-  if (dataSize_ > 0)
+}
+
+uint16_t ParamBody::getParamAddress()
+{
+  return paramTraits.address;
+}
+
+uint8_t ParamBody::getParamSize()
+{
+  return paramTraits.size;
+}
+
+int32_t ParamBody::getRawValue()
+{
+  return paramTraits.toRaw(getValue(), paramTraits.factor);
+}
+
+float ParamBody::getValue()
+{
+  return value;
+}
+
+void ParamBody::setRawValue(int32_t rawValue_)
+{
+  return setValue(paramTraits.fromRaw(rawValue_, paramTraits.factor));
+}
+
+void ParamBody::setValue(float value_)
+{
+  if (value_ > paramTraits.max)
   {
-    dataBuffer = std::make_shared<char>(dataSize_);
+    LOGW("ParamBody::setValue: Parameter 0x%04X value greater than its upper limit! %3.3f > %3.3f\n",
+         getParamAddress(), value_, paramTraits.max);
   }
-  else
+  else if (value_ < paramTraits.min)
   {
-    dataBuffer = nullptr;
+    LOGW("ParamBody::setValue: Parameter 0x%04X value smaller than its lower limit! %3.3f < %3.3f\n",
+         getParamAddress(), value_, paramTraits.min);
   }
+  value = value_;
 }
 
-uint32_t ParamBody::getParamAddress()
+bool ParamBody::isReadable()
 {
-  return paramAddress;
+  return paramTraits.isReadable;
 }
 
-size_t ParamBody::getDataSize()
+bool ParamBody::isWriteable()
 {
-  return dataSize;
-}
-
-std::shared_ptr<char> ParamBody::getDataBuffer()
-{
-  return dataBuffer;
+  return paramTraits.isWriteable;
 }

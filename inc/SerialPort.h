@@ -13,17 +13,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef SERIALPORT_H_
+#define SERIALPORT_H_
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <string>
 
-class ParamWriter
+class SerialPort
 {
 public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  SerialPort();
+  SerialPort(std::string serialPortName);
+  ~SerialPort() = default;
+
+  virtual void openSerial();
+  virtual void closeSerial();
+  virtual ssize_t readSerial(void* buffer, size_t dataSize);
+  virtual ssize_t writeSerial(const void* buffer, size_t dataSize);
+
+private:
+  std::string serialPortName;
+  int         serialPortFD;
 };
 
-#endif // PARAMWRITER_H_
+#endif // SERIALPORT_H_

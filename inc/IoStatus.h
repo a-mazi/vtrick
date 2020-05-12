@@ -13,17 +13,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef IOSTATUS_H_
+#define IOSTATUS_H_
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
-
-class ParamWriter
+enum class IoStatus
 {
-public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  ok,
+  error,
+  timeout,
 };
 
-#endif // PARAMWRITER_H_
+#endif // IOSTATUS_H_

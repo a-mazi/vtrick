@@ -13,34 +13,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMBODY_H_
-#define PARAMBODY_H_
-
-#include <cstddef>
-#include <cstdint>
-#include <memory>
 #include <ParamTraits.h>
 
-class ParamBody
+int32_t ParamTraits::multiplyByFactor(float value, float factor)
 {
-public:
-  ParamBody(const ParamTraits& paramTraits);
+  return static_cast<int32_t>(value * factor);
+}
 
-  uint16_t getParamAddress();
-  uint8_t  getParamSize();
+float ParamTraits::divideByFactor(int32_t value, float factor)
+{
+  return static_cast<float>(value) / factor;
+}
 
-  int32_t getRawValue();
-  float   getValue();
-  void    setRawValue(int32_t rawValue);
-  void    setValue(float value);
+int32_t ParamTraits::pumpValueToRaw(float value, float factor)
+{
+  return static_cast<int32_t>(value * factor) << sizeof(char);
+}
 
-  bool isReadable();
-  bool isWriteable();
+float ParamTraits::pumpValueFromRaw(int32_t value, float factor)
+{
+  int32_t byteMask = (1L << 8) - 1;
+  return static_cast<float>((value >> 8) & byteMask) / factor;
+}
 
-private:
-  float       value;
-  ParamTraits paramTraits;
-};
-
-
-#endif // PARAMBODY_H_
+float ParamTraits::divideLSBbyFactor(int32_t value, float factor)
+{
+  int32_t byteMask = (1L << 8) - 1;
+  return static_cast<float>(value & byteMask) / factor;
+}

@@ -13,17 +13,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef KETTLEMOCK_H_
+#define KETTLEMOCK_H_
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <gmock/gmock.h>
+#include <KettlePort.h>
 
-class ParamWriter
+class KettleMock : public KettlePort
 {
 public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  MOCK_METHOD(void, open, (), (final));
+  MOCK_METHOD(void, close, (), (final));
+  MOCK_METHOD(IoStatus, read, (void*, size_t, int), (final));
+  MOCK_METHOD(IoStatus, write, (const void*, size_t), (final));
 };
 
-#endif // PARAMWRITER_H_
+#endif // KETTLEMOCK_H_

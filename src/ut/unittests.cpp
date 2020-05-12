@@ -13,17 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#include <gtest/gtest.h>
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
-
-class ParamWriter
+int main (int argc, char** argv)
 {
-public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
-};
-
-#endif // PARAMWRITER_H_
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -13,17 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#include <P300PacketGenerator.h>
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
-
-class ParamWriter
+std::shared_ptr<P300Packet> P300PacketGenerator::generate() const
 {
-public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
-};
-
-#endif // PARAMWRITER_H_
+  return std::make_shared<P300Packet>(P300Packet{});
+}

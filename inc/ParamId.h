@@ -1,8 +1,24 @@
+/* Copyright © Artur Maziarek MMXX
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
 #ifndef PARAMID_H_
 #define PARAMID_H_
 
 enum class ParamId
 {
+  CONTROLLER_MARK,
   EQUIPMENT_ID,
   DATE_TIME,
   TEMP_SENSOR01_OUT_ATS,
@@ -69,8 +85,8 @@ enum class ParamId
   SOLAR_INFO,
   SOLAR_DAILY_PRODUCTION /* Wh */,
   // State of pumps, mixers, etc.
-  PUMP_TANK_LOADING,
-  PUMP_CIRCULATION,
+  PUMP_TAP_WATER_TANK_LOADING_ON_OFF,
+  PUMP_TAP_WATER_CIRCULATION_ON_OFF,
   MIXER_POSITION_M1 /* % */,
   MIXER_POSITION_M2 /* % */,
   MIXER_POSITION_M3 /* % */,
@@ -168,6 +184,43 @@ enum class ParamId
   TEMP_SETTING_HOT_WATER /* deg C */,
   TEMP_SETTING_PARTY_MODE_M2 /* deg C */,
   MODE_PARTY_M2,
+  // Data as used in "v-control - 1.2.5" software
+  // VScotHO1
+  TEMP_KETTLE_CURRENT,            /* °C */
+  TEMP_KETTLE_TARGET,             /* °C */
+  TEMP_SUPPLY_CURRENT,            /* °C */
+  TEMP_SUPPLY_TARGET,             /* °C */
+  TEMP_RETURN,                    /* °C */
+  TEMP_OUTSIDE,                   /* °C */
+  TEMP_OUTSIDE_DEWPOINT,          /* °C */
+  TEMP_TAP_WATER_TANK_CURRENT,    /* °C */
+  TEMP_TAP_WATER_TANK_TARGET,     /* °C */
+  TEMP_ROOM_CURRENT,              /* °C */
+  TEMP_ROOM_TARGET,               /* °C */
+  TEMP_ROOM_DAY_NORMAL_TARGET,    /* °C */
+  TEMP_ROOM_NIGHT_REDUCED_TARGET, /* °C */
+  BURNER_CURRENT_POWER,           /* % */
+  BURNER_WORKING_SECONDS,
+  BURNER_WORKING_SECONDS_2,
+  KETTLE_OPERATION_MODE,
+  SWITCHING_VALVE_POSITION,
+  EXTERNAL_LOCK,
+  EXTERNAL_REQUEST,
+};
+
+enum class KettleOperationMode : uint8_t
+{
+  offStandby                    = 0,
+  tapWaterTankHeatingOnly       = 1,
+  tapWaterTankAndCentralHeating = 2,
+  alwaysDayNormalMode           = 3,
+  alwaysNightReducedMode        = 4,
+};
+
+enum class SwitchingValvePosition : uint8_t
+{
+  centralHeating      = 1,
+  tapWaterTankLoading = 3,
 };
 
 #endif // PARAMID_H_

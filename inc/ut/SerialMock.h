@@ -13,17 +13,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMWRITER_H_
-#define PARAMWRITER_H_
+#ifndef SERIALMOCK_H_
+#define SERIALMOCK_H_
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <gmock/gmock.h>
+#include <SerialPort.h>
 
-class ParamWriter
+class SerialMock : public SerialPort
 {
 public:
-  virtual void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  MOCK_METHOD(void, openSerial, (), (final));
+  MOCK_METHOD(void, closeSerial, (), (final));
+  MOCK_METHOD(ssize_t, readSerial, (void*, size_t), (final));
+  MOCK_METHOD(ssize_t, writeSerial, (const void*, size_t), (final));
 };
 
-#endif // PARAMWRITER_H_
+#endif // SERIALMOCK_H_
