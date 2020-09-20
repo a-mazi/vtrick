@@ -13,10 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMREADUTIL_H_
-#define PARAMREADUTIL_H_
+#pragma once
 
-#include <memory>
 #include <thread>
 #include <condition_variable>
 #include <ParamGenerator.h>
@@ -28,7 +26,7 @@ public:
   struct Result;
 
   ParamReadUtil() = delete;
-  ParamReadUtil(std::shared_ptr<const ParamGenerator> paramGenerator, std::shared_ptr<ParamReader> paramReader);
+  ParamReadUtil(const ParamGeneratorPtr& paramGenerator, const ParamReaderPtr& paramReader);
   ~ParamReadUtil() = default;
 
   void statusCb(IoStatus status) final;
@@ -36,8 +34,8 @@ public:
   Result get(ParamId paramId);
 
 private:
-  std::shared_ptr<const ParamGenerator> paramGenerator;
-  std::shared_ptr<ParamReader> paramReader;
+  ParamGeneratorPtr paramGenerator;
+  ParamReaderPtr paramReader;
   std::condition_variable paramReady;
   std::mutex paramReadyControl;
   IoStatus status;
@@ -48,5 +46,3 @@ struct ParamReadUtil::Result
   IoStatus ioStatus;
   float    value;
 };
-
-#endif // PARAMREADUTIL_H_

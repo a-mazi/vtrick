@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef UTSYNCHRONIZER_H_
-#define UTSYNCHRONIZER_H_
+#pragma once
 
 #include <string>
 #include <mutex>
@@ -70,5 +69,3 @@ void UtSynchronizer<Id>::reset(Id id) {
         notifyLock.at(id)->unlock();
     }
 }
-
-#endif // UTSYNCHRONIZER_H_

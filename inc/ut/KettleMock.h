@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef KETTLEMOCK_H_
-#define KETTLEMOCK_H_
+#pragma once
 
 #include <gmock/gmock.h>
 #include <KettlePort.h>
@@ -27,5 +26,3 @@ public:
   MOCK_METHOD(IoStatus, read, (void*, size_t, int), (final));
   MOCK_METHOD(IoStatus, write, (const void*, size_t), (final));
 };
-
-#endif // KETTLEMOCK_H_

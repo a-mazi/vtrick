@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef CONTROLLERCONFIG_H_
-#define CONTROLLERCONFIG_H_
+#pragma once
 
 #include <ControllerId.h>
 #include <ProtocolId.h>
@@ -30,5 +29,3 @@ struct ConfigTraits
 using ControllerConfig = std::map<uint16_t, ConfigTraits>;
 
 extern const ControllerConfig controllerConfig;
-
-#endif // CONTROLLERCONFIG_H_

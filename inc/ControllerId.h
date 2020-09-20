@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef CONTROLLERID_H_
-#define CONTROLLERID_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -43,5 +42,3 @@ enum class ControllerId
   Vitocal200S                ,
   Vitotronic200 = Vitocal200S,
 };
-
-#endif // CONTROLLERID_H_

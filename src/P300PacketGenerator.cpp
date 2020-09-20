@@ -17,5 +17,5 @@
 
 std::shared_ptr<P300Packet> P300PacketGenerator::generate() const
 {
-  return std::make_shared<P300Packet>(P300Packet{});
+  return std::make_shared<P300Packet>();
 }

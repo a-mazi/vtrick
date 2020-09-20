@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef P300PACKET_H_
-#define P300PACKET_H_
+#pragma once
 
 #include <functional>
 #include <IoStatus.h>
@@ -95,5 +94,3 @@ enum class P300Packet::Operation : uint8_t
   dataWrite    = 0x02,
   functionCall = 0x07,
 };
-
-#endif // P300PACKET_H_

@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef KETTLEPORT_H_
-#define KETTLEPORT_H_
+#pragma once
 
 #include <string>
 #include <memory>
@@ -29,7 +28,7 @@ public:
   KettlePort();
   ~KettlePort() = default;
 
-  void attachSerial(std::shared_ptr<SerialPort> serial);
+  void attachSerial(const SerialPortPtr& serial);
   void detachSerial();
 
   void open();
@@ -38,10 +37,10 @@ public:
   IoStatus write(const void* buffer, size_t dataSize);
 
 private:
-  std::shared_ptr<SerialPort> serial;
+  SerialPortPtr serial;
   static constexpr int readRetryIntervalmsec = 100;
   std::shared_ptr<char[]> internalBuffer;
   size_t internalBufferSize;
 };
 
-#endif // KETTLEPORT_H_
+using KettlePortPtr = std::shared_ptr<KettlePort>;

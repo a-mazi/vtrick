@@ -13,10 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef TEMPMONITOR_H_
-#define TEMPMONITOR_H_
+#pragma once
 
-#include <memory>
 #include <thread>
 #include <atomic>
 #include <condition_variable>
@@ -28,7 +26,7 @@ class TempMonitor : public Manipulator, public ParamReadWriteCallback
 {
 public:
   TempMonitor() = delete;
-  TempMonitor(std::shared_ptr<const ParamGenerator> paramGenerator, std::shared_ptr<ParamReader> paramReader);
+  TempMonitor(const ParamGeneratorPtr& paramGenerator, const ParamReaderPtr& paramReader);
   ~TempMonitor() = default;
 
   void start() final;
@@ -36,8 +34,8 @@ public:
   void statusCb(IoStatus status) final;
 
 private:
-  std::shared_ptr<const ParamGenerator> paramGenerator;
-  std::shared_ptr<ParamReader> paramReader;
+  ParamGeneratorPtr paramGenerator;
+  ParamReaderPtr paramReader;
   std::condition_variable paramReady;
   std::mutex paramReadyControl;
   IoStatus status;
@@ -51,5 +49,3 @@ private:
   void checkParamValue(const char* paramString, float value);
   void mainLoop();
 };
-
-#endif // TEMPMONITOR_H_

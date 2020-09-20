@@ -13,10 +13,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef TEMPSETTER_H_
-#define TEMPSETTER_H_
+#pragma once
 
-#include <memory>
 #include <thread>
 #include <atomic>
 #include <condition_variable>
@@ -28,7 +26,7 @@ class TempSetter : public Manipulator, public ParamReadWriteCallback
 {
 public:
   TempSetter() = delete;
-  TempSetter(std::shared_ptr<const ParamGenerator> paramGenerator, std::shared_ptr<ParamWriter> paramWriter);
+  TempSetter(const ParamGeneratorPtr& paramGenerator, const ParamWriterPtr& paramWriter);
   ~TempSetter() = default;
 
   void start() final;
@@ -36,8 +34,8 @@ public:
   void statusCb(IoStatus status) final;
 
 private:
-  std::shared_ptr<const ParamGenerator> paramGenerator;
-  std::shared_ptr<ParamWriter> paramWriter;
+  ParamGeneratorPtr paramGenerator;
+  ParamWriterPtr paramWriter;
   std::condition_variable paramReady;
   std::mutex paramReadyControl;
   IoStatus status;
@@ -51,5 +49,3 @@ private:
   void checkStatus();
   void mainLoop();
 };
-
-#endif // TEMPSETTER_H_

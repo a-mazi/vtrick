@@ -13,9 +13,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef ISPOWEROFTWO_H_
-#define ISPOWEROFTWO_H_
+#pragma once
 
 static constexpr bool isPowerOfTwo(uint32_t value){return (value != 0) && ((value & (value - 1)) == 0);};
-
-#endif // ISPOWEROFTWO_H_

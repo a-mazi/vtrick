@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMID_H_
-#define PARAMID_H_
+#pragma once
 
 enum class ParamId
 {
@@ -222,5 +221,3 @@ enum class SwitchingValvePosition : uint8_t
   centralHeating      = 1,
   tapWaterTankLoading = 3,
 };
-
-#endif // PARAMID_H_

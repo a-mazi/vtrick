@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef LOG_H_
-#define LOG_H_
+#pragma once
 
 #include <stdio.h>
 
@@ -41,5 +40,3 @@
 #else
 #define LOGD(...)
 #endif
-
-#endif // LOG_H_

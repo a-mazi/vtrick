@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PROTOCOLID_H_
-#define PROTOCOLID_H_
+#pragma once
 
 enum class ProtocolId
 {
@@ -22,5 +21,3 @@ enum class ProtocolId
   KW,
   P300,
 };
-
-#endif // PROTOCOLID_H_

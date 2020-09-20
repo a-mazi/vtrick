@@ -21,22 +21,22 @@ ParamBody::ParamBody(const ParamTraits& paramTraits_):
 {
 }
 
-uint16_t ParamBody::getParamAddress()
+uint16_t ParamBody::getParamAddress() const
 {
   return paramTraits.address;
 }
 
-uint8_t ParamBody::getParamSize()
+uint8_t ParamBody::getParamSize() const
 {
   return paramTraits.size;
 }
 
-int32_t ParamBody::getRawValue()
+int32_t ParamBody::getRawValue() const
 {
   return paramTraits.toRaw(getValue(), paramTraits.factor);
 }
 
-float ParamBody::getValue()
+float ParamBody::getValue() const
 {
   return value;
 }
@@ -61,12 +61,12 @@ void ParamBody::setValue(float value_)
   value = value_;
 }
 
-bool ParamBody::isReadable()
+bool ParamBody::isReadable() const
 {
   return paramTraits.isReadable;
 }
 
-bool ParamBody::isWriteable()
+bool ParamBody::isWriteable() const
 {
   return paramTraits.isWriteable;
 }

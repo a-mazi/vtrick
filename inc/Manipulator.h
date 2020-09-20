@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef MANIPULATOR_H_
-#define MANIPULATOR_H_
+#pragma once
 
 class Manipulator
 {
@@ -22,5 +21,3 @@ public:
   virtual void start() = 0;
   virtual void stop() = 0;
 };
-
-#endif // MANIPULATOR_H_

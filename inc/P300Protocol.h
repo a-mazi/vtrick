@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef P300PROTOCOL_H_
-#define P300PROTOCOL_H_
+#pragma once
 
 #include <mutex>
 #include <atomic>
@@ -31,14 +30,14 @@ class P300Protocol : public ParamReader, public ParamWriter
 {
 public:
   P300Protocol() = delete;
-  P300Protocol(std::shared_ptr<P300PacketGenerator> packetGenerator, std::shared_ptr<KettlePort> kettle);
+  P300Protocol(const P300PacketGeneratorPtr& packetGenerator, const KettlePortPtr& kettle);
   ~P300Protocol();
 
   IoStatus init();
   void start();
   void stop();
-  void read(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) final;
-  void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) final;
+  void read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
+  void write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
 
 private:
   enum class Action;
@@ -48,8 +47,8 @@ private:
   static constexpr int initResponseChecks = 3;
   static constexpr int serialReadTimeout = 2000; // in milliseconds
 
-  std::shared_ptr<P300PacketGenerator> packetGenerator;
-  std::shared_ptr<KettlePort> kettle;
+  P300PacketGeneratorPtr packetGenerator;
+  KettlePortPtr kettle;
 
   std::mutex processingControl;
   std::atomic_bool doProcessing;
@@ -60,11 +59,11 @@ private:
   std::condition_variable taskReady;
   static constexpr int taskWaitTime = 500; // in milliseconds
 
-  void addTaskToQueue(Action action, std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback);
+  void addTaskToQueue(Action action, std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback);
 
-  IoStatus readParam(std::shared_ptr<ParamBody> paramBody);
-  IoStatus writeParam(std::shared_ptr<ParamBody> paramBody);
-  IoStatus sendReceive(const std::shared_ptr<P300Packet> request, std::shared_ptr<P300Packet> response);
+  IoStatus readParam(std::shared_ptr<ParamBody>& paramBody);
+  IoStatus writeParam(const std::shared_ptr<ParamBody>& paramBody);
+  IoStatus sendReceive(const std::shared_ptr<P300Packet>& request, std::shared_ptr<P300Packet>& response);
 
   void mainLoop();
 };
@@ -81,5 +80,3 @@ struct P300Protocol::Task
   std::shared_ptr<ParamBody> paramBody;
   ParamReadWriteCallback* callback;
 };
-
-#endif // P300PROTOCOL_H_

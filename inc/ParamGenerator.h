@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMGENERATOR_H_
-#define PARAMGENERATOR_H_
+#pragma once
 
 #include <memory>
 #include <ParamId.h>
@@ -39,4 +38,4 @@ private:
   ControllerId controllerId;
 };
 
-#endif // PARAMGENERATOR_H_
+using ParamGeneratorPtr = std::shared_ptr<const ParamGenerator>;

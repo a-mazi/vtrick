@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMTRAITS_H_
-#define PARAMTRAITS_H_
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -32,11 +31,9 @@ struct ParamTraits
   std::function<int32_t(float, float)> toRaw;
   std::function<float(int32_t, float)> fromRaw;
 
-  static int32_t multiplyByFactor    (float value, float factor);
-  static float   divideByFactor    (int32_t value, float factor);
-  static int32_t pumpValueToRaw      (float value, float factor);
-  static float   pumpValueFromRaw  (int32_t value, float factor);
+  static int32_t multiplyByFactor   (float value, float factor);
+  static float   divideByFactor   (int32_t value, float factor);
+  static int32_t pumpValueToRaw     (float value, float factor);
+  static float   pumpValueFromRaw (int32_t value, float factor);
   static float   divideLSBbyFactor(int32_t value, float factor);
 };
-
-#endif // PARAMTRAITS_H_

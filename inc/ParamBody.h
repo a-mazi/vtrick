@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMBODY_H_
-#define PARAMBODY_H_
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -24,23 +23,21 @@
 class ParamBody
 {
 public:
+  ParamBody() = delete;
   ParamBody(const ParamTraits& paramTraits);
 
-  uint16_t getParamAddress();
-  uint8_t  getParamSize();
+  uint16_t getParamAddress() const;
+  uint8_t  getParamSize() const;
 
-  int32_t getRawValue();
-  float   getValue();
+  int32_t getRawValue() const;
+  float   getValue() const;
   void    setRawValue(int32_t rawValue);
   void    setValue(float value);
 
-  bool isReadable();
-  bool isWriteable();
+  bool isReadable() const;
+  bool isWriteable() const;
 
 private:
   float       value;
   ParamTraits paramTraits;
 };
-
-
-#endif // PARAMBODY_H_

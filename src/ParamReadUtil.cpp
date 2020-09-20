@@ -16,7 +16,7 @@
 #include <ParamReadUtil.h>
 #include <Log.h>
 
-ParamReadUtil::ParamReadUtil(std::shared_ptr<const ParamGenerator> paramGenerator_, std::shared_ptr<ParamReader> paramReader_) :
+ParamReadUtil::ParamReadUtil(const ParamGeneratorPtr& paramGenerator_, const ParamReaderPtr& paramReader_) :
   paramGenerator{paramGenerator_},
   paramReader{paramReader_},
   status{IoStatus::error}

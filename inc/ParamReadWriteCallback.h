@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMREADWRITECALLBACK_H_
-#define PARAMREADWRITECALLBACK_H_
+#pragma once
 
 #include <IoStatus.h>
 
@@ -23,6 +22,3 @@ class ParamReadWriteCallback
 public:
   virtual void statusCb(IoStatus status) = 0;
 };
-
-
-#endif // PARAMREADWRITECALLBACK_H_

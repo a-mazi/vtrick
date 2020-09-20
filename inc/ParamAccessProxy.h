@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMACCESSPROXY_H_
-#define PARAMACCESSPROXY_H_
+#pragma once
 
 #include <memory>
 #include <mutex>
@@ -33,17 +32,17 @@ public:
   struct ParamHistory;
 
   ParamAccessProxy() = delete;
-  ParamAccessProxy(std::shared_ptr<ParamReader> paramReader, std::shared_ptr<ParamWriter> paramWriter,
+  ParamAccessProxy(const ParamReaderPtr& paramReader, const ParamWriterPtr& paramWriter,
                    int64_t retentionTime = 1000 /* milliseconds */);
   ~ParamAccessProxy() = default;
 
-  void read(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) final;
-  void write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) final;
+  void read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
+  void write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
   void statusCb(IoStatus status) final;
 
 private:
-  std::shared_ptr<ParamReader> paramReader;
-  std::shared_ptr<ParamWriter> paramWriter;
+  ParamReaderPtr paramReader;
+  ParamWriterPtr paramWriter;
 
   std::mutex synchronizer;
   std::queue<ParamQueue> paramQueue;
@@ -63,6 +62,3 @@ struct ParamAccessProxy::ParamHistory
   ParamBody paramBody;
   std::chrono::high_resolution_clock::time_point updateTimes;
 };
-
-
-#endif // PARAMACCESSPROXY_H_

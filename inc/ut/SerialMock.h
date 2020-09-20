@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef SERIALMOCK_H_
-#define SERIALMOCK_H_
+#pragma once
 
 #include <gmock/gmock.h>
 #include <SerialPort.h>
@@ -27,5 +26,3 @@ public:
   MOCK_METHOD(ssize_t, readSerial, (void*, size_t), (final));
   MOCK_METHOD(ssize_t, writeSerial, (const void*, size_t), (final));
 };
-
-#endif // SERIALMOCK_H_

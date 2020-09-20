@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef SERIALPORT_H_
-#define SERIALPORT_H_
+#pragma once
 
+#include <memory>
 #include <string>
 
 class SerialPort
@@ -35,4 +35,4 @@ private:
   int         serialPortFD;
 };
 
-#endif // SERIALPORT_H_
+using SerialPortPtr = std::shared_ptr<SerialPort>;

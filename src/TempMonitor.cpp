@@ -16,7 +16,7 @@
 #include <TempMonitor.h>
 #include <Log.h>
 
-TempMonitor::TempMonitor(std::shared_ptr<const ParamGenerator> paramGenerator_, std::shared_ptr<ParamReader> paramReader_) :
+TempMonitor::TempMonitor(const ParamGeneratorPtr& paramGenerator_, const ParamReaderPtr& paramReader_) :
   paramGenerator{paramGenerator_},
   paramReader{paramReader_},
   status{IoStatus::error},

@@ -63,7 +63,7 @@ int main(int argc, char * argv[]) {
   auto kettlePort  = std::make_shared<KettlePort>();
   kettlePort->attachSerial(serialPort);
 
-  auto packetGenerator = std::make_shared<P300PacketGenerator>(P300PacketGenerator{});
+  auto packetGenerator = std::make_shared<P300PacketGenerator>();
   auto protocol300  = std::make_shared<P300Protocol>(packetGenerator, kettlePort);
 
   auto paramAccessProxy = std::make_shared<ParamAccessProxy>(protocol300, protocol300, 10000);
@@ -102,15 +102,15 @@ int main(int argc, char * argv[]) {
   {
     return 1;
   }
-  auto tempMonitor = std::make_shared<TempMonitor>(paramGenerator, paramAccessProxy);
-  auto tempSetter = std::make_shared<TempSetter>(paramGenerator, paramAccessProxy);
+  TempMonitor tempMonitor{paramGenerator, paramAccessProxy};
+  TempSetter  tempSetter{paramGenerator, paramAccessProxy};
 
-  tempMonitor->start();
+  tempMonitor.start();
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  tempSetter->start();
+  tempSetter.start();
   std::this_thread::sleep_for(std::chrono::seconds(30));
-  tempSetter->stop();
-  tempMonitor->stop();
+  tempSetter.stop();
+  tempMonitor.stop();
   protocol300->stop();
   kettlePort->close();
 

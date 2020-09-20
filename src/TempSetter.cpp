@@ -16,7 +16,7 @@
 #include <TempSetter.h>
 #include <Log.h>
 
-TempSetter::TempSetter(std::shared_ptr<const ParamGenerator> paramGenerator_, std::shared_ptr<ParamWriter> paramWriter_) :
+TempSetter::TempSetter(const ParamGeneratorPtr& paramGenerator_, const ParamWriterPtr& paramWriter_) :
   paramGenerator{paramGenerator_},
   paramWriter{paramWriter_},
   status{IoStatus::error},

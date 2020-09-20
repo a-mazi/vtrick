@@ -17,8 +17,7 @@
 #include <cassert>
 #include <Log.h>
 
-ParamAccessProxy::ParamAccessProxy(std::shared_ptr<ParamReader> paramReader_,
-                                   std::shared_ptr<ParamWriter> paramWriter_,
+ParamAccessProxy::ParamAccessProxy(const ParamReaderPtr& paramReader_, const ParamWriterPtr& paramWriter_,
                                    int64_t retentionTime_) :
   paramReader{paramReader_},
   paramWriter{paramWriter_},
@@ -26,7 +25,7 @@ ParamAccessProxy::ParamAccessProxy(std::shared_ptr<ParamReader> paramReader_,
 {
 }
 
-void ParamAccessProxy::read(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback)
+void ParamAccessProxy::read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
 {
   std::lock_guard<std::mutex> synchoLock{synchronizer};
   auto paramAddress = paramBody->getParamAddress();
@@ -37,9 +36,9 @@ void ParamAccessProxy::read(std::shared_ptr<ParamBody> paramBody, ParamReadWrite
     int64_t elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - paramHistory.updateTimes).count();
     if (elapsedTime <= retentionTime)
     {
-      LOGD("ParamAccessProxy::read: Read param %04X from history\n", paramAddress);
+      LOGD("ParamAccessProxy::read: Read parameter 0x%04X from history\n", paramAddress);
       *paramBody = paramHistory.paramBody;
-      auto callbackThead = std::thread{&ParamReadWriteCallback::statusCb, callback, IoStatus::ok};
+      std::thread callbackThead{&ParamReadWriteCallback::statusCb, callback, IoStatus::ok};
       callbackThead.detach();
       return;
     }
@@ -48,7 +47,7 @@ void ParamAccessProxy::read(std::shared_ptr<ParamBody> paramBody, ParamReadWrite
   paramReader->read(paramBody, this);
 }
 
-void ParamAccessProxy::write(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback)
+void ParamAccessProxy::write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
 {
   std::lock_guard<std::mutex> synchoLock{synchronizer};
   paramQueue.push({paramBody, callback});

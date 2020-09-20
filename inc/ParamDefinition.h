@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMDEFINITION_H_
-#define PARAMDEFINITION_H_
+#pragma once
 
 #include <map>
 #include <ControllerId.h>
@@ -24,5 +23,3 @@
 using ParamDefinition = std::map<ControllerId, std::map<ParamId, ParamTraits>>;
 
 extern const ParamDefinition paramDefinition;
-
-#endif // PARAMDEFINITION_H_

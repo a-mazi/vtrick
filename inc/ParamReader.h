@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef PARAMREADER_H_
-#define PARAMREADER_H_
+#pragma once
 
 #include <memory>
 #include <ParamBody.h>
@@ -23,7 +22,7 @@
 class ParamReader
 {
 public:
-  virtual void read(std::shared_ptr<ParamBody> paramBody, ParamReadWriteCallback* callback) = 0;
+  virtual void read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) = 0;
 };
 
-#endif // PARAMREADER_H_
+using ParamReaderPtr = std::shared_ptr<ParamReader>;

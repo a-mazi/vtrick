@@ -28,7 +28,7 @@ KettlePort::KettlePort() :
 {
 }
 
-void KettlePort::attachSerial(std::shared_ptr<SerialPort> serial_)
+void KettlePort::attachSerial(const SerialPortPtr& serial_)
 {
   serial = serial_;
 }

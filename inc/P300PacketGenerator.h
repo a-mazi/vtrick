@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef P300PACKETGENERATOR_H_
-#define P300PACKETGENERATOR_H_
+#pragma once
 
 #include <memory>
 #include <P300Packet.h>
@@ -25,4 +24,4 @@ public:
   std::shared_ptr<P300Packet> generate() const;
 };
 
-#endif // P300PACKETGENERATOR_H_
+using P300PacketGeneratorPtr = std::shared_ptr<P300PacketGenerator>;

@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#ifndef IOSTATUS_H_
-#define IOSTATUS_H_
+#pragma once
 
 enum class IoStatus
 {
@@ -22,5 +21,3 @@ enum class IoStatus
   error,
   timeout,
 };
-
-#endif // IOSTATUS_H_
