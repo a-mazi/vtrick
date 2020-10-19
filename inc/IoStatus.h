@@ -15,9 +15,14 @@
  */
 #pragma once
 
+#include <map>
+#include <string>
+
 enum class IoStatus
 {
   ok,
   error,
   timeout,
 };
+
+extern const std::map<IoStatus, std::string> ioStatusName;

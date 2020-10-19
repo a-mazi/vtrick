@@ -23,10 +23,13 @@ ParamAccessProxy::ParamAccessProxy(const ParamReaderPtr& paramReader_, const Par
   paramWriter{paramWriter_},
   retentionTime{retentionTime_}
 {
+  assert(paramReader);
+  assert(paramWriter);
 }
 
-void ParamAccessProxy::read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
+void ParamAccessProxy::read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
 {
+  assert(paramBody);
   std::lock_guard<std::mutex> synchoLock{synchronizer};
   auto paramAddress = paramBody->getParamAddress();
   if (paramMemory.count(paramAddress) > 0)
@@ -47,8 +50,9 @@ void ParamAccessProxy::read(std::shared_ptr<ParamBody>& paramBody, ParamReadWrit
   paramReader->read(paramBody, this);
 }
 
-void ParamAccessProxy::write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
+void ParamAccessProxy::write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
 {
+  assert(paramBody);
   std::lock_guard<std::mutex> synchoLock{synchronizer};
   paramQueue.push({paramBody, callback});
   paramWriter->write(paramBody, this);

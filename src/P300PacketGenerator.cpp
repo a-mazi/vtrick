@@ -15,7 +15,7 @@
  */
 #include <P300PacketGenerator.h>
 
-std::shared_ptr<P300Packet> P300PacketGenerator::generate() const
+P300PacketPtr P300PacketGenerator::generate() const
 {
   return std::make_shared<P300Packet>();
 }

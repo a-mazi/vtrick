@@ -15,6 +15,7 @@
 
 RELDIR := bin
 DEBDIR := debug
+TRYDIR := tryouts
 INCDIR := inc
 SRCDIR := src
 APPDIR := main
@@ -22,14 +23,20 @@ TMPDIR := intermediates
 COVDIR := codecoverage
 
 OBJ_APP_MODU_RELEASE := $(patsubst $(SRCDIR)/%.cpp,           $(RELDIR)/$(TMPDIR)/%.o,    $(wildcard $(SRCDIR)/*.cpp))
-APPS_RELEASE         := $(patsubst $(SRCDIR)/$(APPDIR)/%.cpp, $(RELDIR)/%,                $(wildcard $(SRCDIR)/$(APPDIR)/*.cpp))
+BIN_APP_RELEASE      := $(patsubst $(SRCDIR)/$(APPDIR)/%.cpp, $(RELDIR)/%,                $(wildcard $(SRCDIR)/$(APPDIR)/*.cpp))
 
 OBJ_APP_MODU_DEBUG   := $(patsubst $(SRCDIR)/%.cpp,           $(DEBDIR)/$(TMPDIR)/%.o,    $(wildcard $(SRCDIR)/*.cpp))
-APPS_DEBUG           := $(patsubst $(SRCDIR)/$(APPDIR)/%.cpp, $(DEBDIR)/%,                $(wildcard $(SRCDIR)/$(APPDIR)/*.cpp))
-OBJ_UT_ALL           := $(patsubst $(SRCDIR)/ut/%.cpp,        $(DEBDIR)/$(TMPDIR)/ut/%.o, $(wildcard $(SRCDIR)/ut/*.cpp))
-UT                   :=                                       $(DEBDIR)/ut/run
+BIN_APP_DEBUG        := $(patsubst $(SRCDIR)/$(APPDIR)/%.cpp, $(DEBDIR)/%,                $(wildcard $(SRCDIR)/$(APPDIR)/*.cpp))
 
-OBJFILES := $(OBJ_APP_MODU_RELEASE) $(RELDIR)/$(TMPDIR)/$(APPDIR)/*.o $(OBJ_APP_MODU_DEBUG) $(DEBDIR)/$(TMPDIR)/$(APPDIR)/*.o $(OBJ_UT_ALL)
+OBJ_UT_ALL           := $(patsubst $(SRCDIR)/ut/%.cpp,        $(DEBDIR)/$(TMPDIR)/ut/%.o, $(wildcard $(SRCDIR)/ut/*.cpp))
+BIN_UT               :=                                       $(DEBDIR)/ut/run
+
+BIN_TRYOUTS          := $(patsubst $(SRCDIR)/$(TRYDIR)/%.cpp, $(DEBDIR)/$(TRYDIR)/%,      $(wildcard $(SRCDIR)/$(TRYDIR)/*.cpp))
+
+OBJFILES := $(OBJ_APP_MODU_RELEASE) $(RELDIR)/$(TMPDIR)/$(APPDIR)/*.o \
+            $(OBJ_APP_MODU_DEBUG)   $(DEBDIR)/$(TMPDIR)/$(APPDIR)/*.o \
+            $(OBJ_UT_ALL)                                             \
+                                    $(DEBDIR)/$(TMPDIR)/$(TRYDIR)/*.o
 DEPFILES := $(OBJFILES:.o=.d)
 
 RELEASE   := \"$(shell echo `git log --date=short --pretty='%ad_%h' -1``git status -s` | sed s/\\s/_/g)\"
@@ -46,18 +53,19 @@ clean:
 -include $(DEPFILES)
 
 app_release: CXXFLAGS += -DLOGLEVEL=3 -DRELEASE=$(RELEASE)
-app_release: $(APPS_RELEASE)
+app_release: $(BIN_APP_RELEASE)
 
 app_debug:   CXXFLAGS += -DLOGLEVEL=4
-app_debug:   $(APPS_DEBUG)
+app_debug:   $(BIN_APP_DEBUG)
+app_debug:   $(BIN_TRYOUTS)
 
 ut:          CXXFLAGS += -DLOGLEVEL=4 -DUT_BUILD
-ut:          $(UT)
+ut:          $(BIN_UT)
 
 utcov:       CXXFLAGS += --coverage
 utcov:       LNKFLAGS += --coverage
 utcov:       ut
-	$(UT)
+	$(BIN_UT)
 	@mkdir -p $(DEBDIR)/$(COVDIR)
 	lcov --rc lcov_branch_coverage=1 --capture --directory $(DEBDIR)/$(TMPDIR) --output-file $(DEBDIR)/$(COVDIR)/coverage.info
 	genhtml $(DEBDIR)/$(COVDIR)/coverage.info --branch-coverage --output-directory $(DEBDIR)/$(COVDIR)
@@ -69,9 +77,13 @@ $(RELDIR)/%: $(OBJ_APP_MODU_RELEASE) $(RELDIR)/$(TMPDIR)/$(APPDIR)/%.o
 $(DEBDIR)/%: $(OBJ_APP_MODU_DEBUG) $(DEBDIR)/$(TMPDIR)/$(APPDIR)/%.o
 	g++ $(LNKFLAGS) -o $@ $^
 
-$(UT): $(OBJ_APP_MODU_DEBUG) $(OBJ_UT_ALL)
+$(BIN_UT): $(OBJ_APP_MODU_DEBUG) $(OBJ_UT_ALL)
 	@mkdir -p $(@D)
 	g++ $(LNKFLAGS) -o $@ $^ -lgtest -lgmock
+
+$(DEBDIR)/$(TRYDIR)/%: $(DEBDIR)/$(TMPDIR)/$(TRYDIR)/%.o
+	@mkdir -p $(@D)
+	g++ $(LNKFLAGS) -o $@ $^
 
 
 $(RELDIR)/$(TMPDIR)/%.o: $(SRCDIR)/%.cpp

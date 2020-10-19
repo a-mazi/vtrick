@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>
+vtrick
+</title>
+<style type="text/css">
+@page { margin: 2cm }
+p { margin-bottom: 0.25cm; line-height: 115% }
+</style>
+</head>
+<body>
+<h1>
+vtrick
+</h1>
+<p>
+<i>vtrick</i> is a program to trick behavior of Viessmann central heating kettles.
+</p>
+<h2>
+Requirements
+</h2>
+<p>
+Viessmann kettles show sometimes a specific misbehavior.
+The kettle while starting its burner in central heating mode switches it off after couple of seconds.
+Burner starts are repeated several times with period of seconds with the same effect.
+This leads to an excessive burner and fuel usage.
+This is observed when the system reaches near-target temperature.
+The kettle then detects heat consumption is too slow by slow declining return water temperature.
+This is most likely interpreted as chocked circuit and the burner gets switched off to avoid damage.
+</p>
+<p>
+To circumvent this misbehavior it is enough to set the system target temperature to some high value for a couple of seconds.
+This is what <i>vtrick</i> is doing, when it detects burner start in central heating mode.
+</p>
+<p>
+The computer is communicating with the kettle via Optolink Interface.
+Device example can be seen
+<a href="https://github.com/openv/openv/wiki/Bauanleitung-USB">
+here
+</a>
+.
+</p>
+<h2>
+Usage
+</h2>
+<p>
+<i>vtrick</i> is started with an argument indicating Optolink Interface serial port.
+</p>
+<pre>
+$ ./vtrick /dev/ttyUSB0
+</pre>
+<h2>
+Build dependencies
+</h2>
+<ul>
+<li>
+<p>
+make
+</p>
+<li>
+<p>
+gtest v1.10.0 – for unit tests
+</p>
+<li>
+<p>
+lcov – for unit test coverage report
+</p>
+</ul>
+<h2>
+Known issues
+</h2>
+<p>
+Initialization of the serial port is not always working properly.
+This will be solved with coming commits.
+In the meantime the serial port can be bootstrapped with the below credited software.
+</p>
+<h2>
+Credits
+</h2>
+<p>
+Credit goes to Peter Schulze, author of the <i>v-control – 1.2.5</i> software.
+I used it in debug mode to check parameter codes my kettle is using.
+If you want to add support for new kettles, it’d advise to use Peter’s program.
+</p>
+<p>
+There is also lot of information on the subject on the
+<a href="https://github.com/openv/openv">
+openv
+</a>
+wiki.
+</p>
+<h2>
+End note
+</h2>
+<p>
+File <code>doc/readme.html</code> is automatically converted to <code>README.md</code> with git commit using <i>pandoc</i> tool.
+</p>
+</body>
+</html>

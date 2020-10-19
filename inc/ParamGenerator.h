@@ -31,7 +31,7 @@ public:
   bool isParamIdAvailable(ParamId paramId) const;
 
   bool setControllerId(ControllerId controllerId);
-  std::shared_ptr<ParamBody> generate(ParamId paramId) const;
+  ParamBodyPtr generate(ParamId paramId) const;
 
 private:
   const ParamDefinition& paramDefinition;

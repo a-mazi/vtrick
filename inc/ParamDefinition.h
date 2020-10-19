@@ -23,3 +23,11 @@
 using ParamDefinition = std::map<ControllerId, std::map<ParamId, ParamTraits>>;
 
 extern const ParamDefinition paramDefinition;
+
+namespace ValvePosition
+{
+  enum
+  {
+    heating = 1,
+  };
+}

@@ -14,14 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 #include <TempSetter.h>
+#include <cassert>
 #include <Log.h>
 
-TempSetter::TempSetter(const ParamGeneratorPtr& paramGenerator_, const ParamWriterPtr& paramWriter_) :
-  paramGenerator{paramGenerator_},
-  paramWriter{paramWriter_},
-  status{IoStatus::error},
+TempSetter::TempSetter(ParamSetterPtr&& paramSetter_) :
+  paramSetter{std::move(paramSetter_)},
   doProcessing{false}
 {
+  assert(paramSetter);
 }
 
 void TempSetter::start()
@@ -44,33 +44,15 @@ void TempSetter::stop()
   }
 }
 
-void TempSetter::statusCb(IoStatus status_)
-{
-  {
-    std::lock_guard<std::mutex> paramReadyLock{paramReadyControl};
-    status = status_;
-    LOGD("TempSetter::statusCb: Callback received, code = %d\n", (int)status_);
-  }
-  paramReady.notify_all();
-}
-
-void TempSetter::checkStatus()
+void TempSetter::checkStatus(IoStatus status)
 {
   if (status == IoStatus::ok)
   {
     LOGI("TempSetter::checkStatus: Parameter setting success\n");
   }
-  else if (status == IoStatus::error)
-  {
-    LOGE("TempSetter::checkStatus: Parameter setting failure\n");
-  }
-  else if (status == IoStatus::timeout)
-  {
-    LOGE("TempSetter::checkStatus: Parameter setting timeout\n");
-  }
   else
   {
-    LOGE("TempSetter::checkStatus: Parameter setting unknown state\n");
+    LOGE("TempSetter::checkStatus: Parameter setting %s\n", ioStatusName.at(status).c_str());
   }
 }
 
@@ -80,25 +62,12 @@ void TempSetter::mainLoop()
   while (doProcessing.load())
   {
     LOGD("TempSetter::mainLoop: loop rolling\n");
-
-    status = IoStatus::error;
-    auto param = paramGenerator->generate(ParamId::TEMP_ROOM_DAY_NORMAL_TARGET);
-    if (param == nullptr)
-    {
-      doProcessing.store(false);
-      break;
-    }
-
     float temp = 21 + (tempOffset++ & 1);
-    param->setValue(temp);
 
     LOGI("TempSetter::mainLoop: Setting day temperature target: %2.1f\n", temp);
-    std::unique_lock<std::mutex> paramReadyLock{paramReadyControl};
-    paramWriter->write(param, this);
-    paramReady.wait(paramReadyLock);
+    auto status = paramSetter->set(ParamId::TEMP_ROOM_DAY_NORMAL_TARGET, temp);
 
-    checkStatus();
-
+    checkStatus(status);
     std::this_thread::sleep_for(std::chrono::milliseconds(tempWriteInterval));
   }
 }

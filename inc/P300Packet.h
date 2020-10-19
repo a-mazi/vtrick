@@ -15,6 +15,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <functional>
 #include <IoStatus.h>
 
@@ -70,6 +71,9 @@ private:
   static void     writeLittleEndian(uint8_t* buffer, size_t valueSize, uint32_t value);
   static uint32_t readLittleEndian(const uint8_t* buffer, size_t valueSize);
 };
+
+using P300PacketPtr = std::shared_ptr<P300Packet>;
+using ConstP300PacketPtr = std::shared_ptr<const P300Packet>;
 
 enum class P300Packet::Type : uint8_t
 {

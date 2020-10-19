@@ -15,9 +15,28 @@
  */
 #pragma once
 
-class Manipulator
+#include <thread>
+#include <condition_variable>
+#include <ParamGenerator.h>
+#include <ParamWriter.h>
+
+class ParamSetter: public ParamReadWriteCallback
 {
 public:
-  virtual void start() = 0;
-  virtual void stop() = 0;
+  ParamSetter() = delete;
+  ParamSetter(const ParamGeneratorPtr& paramGenerator, const ParamWriterPtr& paramWriter);
+  ~ParamSetter() = default;
+
+  void statusCb(IoStatus status) final;
+
+  IoStatus set(ParamId paramId, float value);
+
+private:
+  ParamGeneratorPtr paramGenerator;
+  ParamWriterPtr paramWriter;
+  std::condition_variable paramReady;
+  std::mutex paramReadyControl;
+  IoStatus status;
 };
+
+using ParamSetterPtr = std::shared_ptr<ParamSetter>;

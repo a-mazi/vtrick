@@ -22,8 +22,8 @@
 
 // LCOV_EXCL_START
 KettlePort::KettlePort() :
-  serial{nullptr},
-  internalBuffer{nullptr},
+  serial{},
+  internalBuffer{},
   internalBufferSize{0}
 {
 }
@@ -35,12 +35,12 @@ void KettlePort::attachSerial(const SerialPortPtr& serial_)
 
 void KettlePort::detachSerial()
 {
-  serial = nullptr;
+  serial.reset();
 }
 
 void KettlePort::open()
 {
-  if (serial != nullptr)
+  if (serial)
   {
     serial->openSerial();
   }
@@ -48,7 +48,7 @@ void KettlePort::open()
 
 void KettlePort::close()
 {
-  if (serial != nullptr)
+  if (serial)
   {
     serial->closeSerial();
   }
@@ -126,7 +126,7 @@ IoStatus KettlePort::read(void* buffer, size_t dataSize, int timeoutmsec)
 // LCOV_EXCL_START
 IoStatus KettlePort::write(const void* buffer, size_t dataSize)
 {
-  if (serial != nullptr)
+  if (serial)
   {
     auto dataWrite = serial->writeSerial(buffer, dataSize);
     if (static_cast<size_t>(dataWrite) != dataSize)

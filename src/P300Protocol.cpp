@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 #include <P300Protocol.h>
+#include <cassert>
 #include <Log.h>
 
 P300Protocol::P300Protocol(const P300PacketGeneratorPtr& packetGenerator_, const KettlePortPtr& kettle_) :
@@ -21,6 +22,8 @@ P300Protocol::P300Protocol(const P300PacketGeneratorPtr& packetGenerator_, const
   kettle{kettle_},
   doProcessing{false}
 {
+  assert(packetGenerator);
+  assert(kettle);
 }
 
 P300Protocol::~P300Protocol()
@@ -86,17 +89,19 @@ void P300Protocol::stop()
   }
 }
 
-void P300Protocol::read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
+void P300Protocol::read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
 {
+  assert(paramBody);
   addTaskToQueue(Action::read, paramBody, callback);
 }
 
-void P300Protocol::write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
+void P300Protocol::write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
 {
+  assert(paramBody);
   addTaskToQueue(Action::write, paramBody, callback);
 }
 
-void P300Protocol::addTaskToQueue(Action action, std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback)
+void P300Protocol::addTaskToQueue(Action action, const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
 {
   {
     std::lock_guard<std::mutex> taskQueueLock{taskQueueControl};
@@ -105,7 +110,7 @@ void P300Protocol::addTaskToQueue(Action action, std::shared_ptr<ParamBody>& par
   taskReady.notify_all();
 }
 
-IoStatus P300Protocol::readParam(std::shared_ptr<ParamBody>& paramBody)
+IoStatus P300Protocol::readParam(const ParamBodyPtr& paramBody)
 {
   auto request = packetGenerator->generate();
   auto response = packetGenerator->generate();
@@ -126,7 +131,7 @@ IoStatus P300Protocol::readParam(std::shared_ptr<ParamBody>& paramBody)
   return ioStatus;
 }
 
-IoStatus P300Protocol::writeParam(const std::shared_ptr<ParamBody>& paramBody)
+IoStatus P300Protocol::writeParam(const ConstParamBodyPtr& paramBody)
 {
   auto request = packetGenerator->generate();
   auto response = packetGenerator->generate();
@@ -143,7 +148,7 @@ IoStatus P300Protocol::writeParam(const std::shared_ptr<ParamBody>& paramBody)
   return ioStatus;
 }
 
-IoStatus P300Protocol::sendReceive(const std::shared_ptr<P300Packet>& request, std::shared_ptr<P300Packet>& response)
+IoStatus P300Protocol::sendReceive(const ConstP300PacketPtr& request, const P300PacketPtr& response)
 {
   IoStatus ioStatus;
 

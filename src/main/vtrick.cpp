@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 #include <memory>
+#include <iostream>
 #include <Log.h>
 #include <SerialPort.h>
 #include <KettlePort.h>
@@ -23,9 +24,11 @@
 #include <P300Protocol.h>
 #include <P300PacketGenerator.h>
 #include <ParamAccessProxy.h>
+#include <ParamGetter.h>
+#include <ParamSetter.h>
 #include <TempMonitor.h>
 #include <TempSetter.h>
-#include <ParamReadUtil.h>
+#include <TempTricker.h>
 
 bool isControllerSupported(uint16_t controllerMark, ControllerId& controllerId)
 {
@@ -51,22 +54,32 @@ bool isControllerSupported(uint16_t controllerMark, ControllerId& controllerId)
 }
 
 
-int main(int argc, char * argv[]) {
-
+int main(int argc, char * argv[])
+{
 #ifdef RELEASE
   LOGI("vtrick: Release %s\n", RELEASE);
 #else
   LOGI("vtrick: Debug build\n");
 #endif
 
-  auto serialPort  = std::make_shared<SerialPort>("/dev/ttyUSB0");
+  SerialPortPtr serialPort{};
+  if (argc > 1)
+  {
+    serialPort = std::make_shared<SerialPort>(argv[1]);
+  }
+  else
+  {
+    LOGE("vtrick: No kettle serial port given!\n");
+    return 1;
+  }
+
   auto kettlePort  = std::make_shared<KettlePort>();
   kettlePort->attachSerial(serialPort);
 
   auto packetGenerator = std::make_shared<P300PacketGenerator>();
   auto protocol300  = std::make_shared<P300Protocol>(packetGenerator, kettlePort);
 
-  auto paramAccessProxy = std::make_shared<ParamAccessProxy>(protocol300, protocol300, 10000);
+  auto paramAccessProxy = std::make_shared<ParamAccessProxy>(protocol300, protocol300, 1000);
 
   auto paramGenerator = std::make_shared<ParamGenerator>(paramDefinition);
   if (!paramGenerator->setControllerId(ControllerId::ALL))
@@ -86,8 +99,8 @@ int main(int argc, char * argv[]) {
   }
 
   LOGI("vtrick: Reading controller Mark ...\n");
-  ParamReadUtil paramReadUtil{paramGenerator, paramAccessProxy};
-  auto result = paramReadUtil.get(ParamId::CONTROLLER_MARK);
+  auto paramGetter = std::make_shared<ParamGetter>(paramGenerator, paramAccessProxy);
+  auto result = paramGetter->get(ParamId::CONTROLLER_MARK);
 
   uint16_t     controllerMark = static_cast<uint16_t>(result.value);
   ControllerId controllerId   = ControllerId::UNKNOWN;
@@ -102,15 +115,19 @@ int main(int argc, char * argv[]) {
   {
     return 1;
   }
-  TempMonitor tempMonitor{paramGenerator, paramAccessProxy};
-  TempSetter  tempSetter{paramGenerator, paramAccessProxy};
 
-  tempMonitor.start();
-  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  tempSetter.start();
-  std::this_thread::sleep_for(std::chrono::seconds(30));
-  tempSetter.stop();
-  tempMonitor.stop();
+  TempTricker tempTricker{std::move(paramGetter), std::make_shared<ParamSetter>(paramGenerator, paramAccessProxy)};
+
+  LOGI("vtrick: Starting TempTricker\n");
+  tempTricker.start();
+
+  char key{'\0'};
+  std::cin.get(key);
+  std::cin.ignore();
+
+  LOGI("vtrick: Stopping TempTricker\n");
+  tempTricker.stop();
+
   protocol300->stop();
   kettlePort->close();
 

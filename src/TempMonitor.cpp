@@ -14,14 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 #include <TempMonitor.h>
+#include <cassert>
 #include <Log.h>
 
-TempMonitor::TempMonitor(const ParamGeneratorPtr& paramGenerator_, const ParamReaderPtr& paramReader_) :
-  paramGenerator{paramGenerator_},
-  paramReader{paramReader_},
-  status{IoStatus::error},
+TempMonitor::TempMonitor(ParamGetterPtr&& paramGetter_) :
+  paramGetter{std::move(paramGetter_)},
   doProcessing{false}
 {
+  assert(paramGetter);
 }
 
 void TempMonitor::start()
@@ -44,33 +44,15 @@ void TempMonitor::stop()
   }
 }
 
-void TempMonitor::statusCb(IoStatus status_)
+void TempMonitor::checkParamValue(const char* paramString, ParamGetter::Result result)
 {
+  if (result.ioStatus == IoStatus::ok)
   {
-    std::lock_guard<std::mutex> paramReadyLock{paramReadyControl};
-    status = status_;
-    LOGD("TempMonitor::statusCb: Callback received, code = %d\n", (int)status_);
-  }
-  paramReady.notify_all();
-}
-
-void TempMonitor::checkParamValue(const char* paramString, float value)
-{
-  if (status == IoStatus::ok)
-  {
-    LOGI("TempMonitor::checkParamValue: %s: %2.1f\n", paramString, value);
-  }
-  else if (status == IoStatus::error)
-  {
-    LOGE("TempMonitor::checkParamValue: %s read failure\n", paramString);
-  }
-  else if (status == IoStatus::timeout)
-  {
-    LOGE("TempMonitor::checkParamValue: %s read timeout\n", paramString);
+    LOGI("TempMonitor::checkParamValue: %s: %2.1f\n", paramString, result.value);
   }
   else
   {
-    LOGE("TempMonitor::checkParamValue: %s read unknown state\n", paramString);
+    LOGE("TempMonitor::checkParamValue: %s read %s\n", paramString, ioStatusName.at(result.ioStatus).c_str());
   }
 }
 
@@ -80,32 +62,8 @@ void TempMonitor::mainLoop()
   {
     LOGD("TempMonitor::mainLoop: loop rolling\n");
 
-    status = IoStatus::error;
-    auto param = paramGenerator->generate(ParamId::TEMP_KETTLE_CURRENT);
-    if (param == nullptr)
-    {
-      doProcessing.store(false);
-      break;
-    }
-
-    std::unique_lock<std::mutex> paramReadyLock{paramReadyControl};
-    paramReader->read(param, this);
-    paramReady.wait(paramReadyLock);
-
-    checkParamValue("Kettle temperature", param->getValue());
-
-    status = IoStatus::error;
-    param = paramGenerator->generate(ParamId::TEMP_ROOM_DAY_NORMAL_TARGET);
-    if (param == nullptr)
-    {
-      doProcessing.store(false);
-      break;
-    }
-
-    paramReader->read(param, this);
-    paramReady.wait(paramReadyLock);
-
-    checkParamValue("Day temperature target", param->getValue());
+    checkParamValue("Kettle temperature",     paramGetter->get(ParamId::TEMP_KETTLE_CURRENT));
+    checkParamValue("Day temperature target", paramGetter->get(ParamId::TEMP_ROOM_DAY_NORMAL_TARGET));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(tempReadInterval));
   }

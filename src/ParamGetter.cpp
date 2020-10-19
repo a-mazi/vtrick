@@ -13,34 +13,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#include <ParamReadUtil.h>
+#include <ParamGetter.h>
+#include <cassert>
 #include <Log.h>
 
-ParamReadUtil::ParamReadUtil(const ParamGeneratorPtr& paramGenerator_, const ParamReaderPtr& paramReader_) :
+ParamGetter::ParamGetter(const ParamGeneratorPtr& paramGenerator_, const ParamReaderPtr& paramReader_) :
   paramGenerator{paramGenerator_},
   paramReader{paramReader_},
   status{IoStatus::error}
 {
+  assert(paramGenerator);
+  assert(paramReader);
 }
 
-void ParamReadUtil::statusCb(IoStatus status_)
+void ParamGetter::statusCb(IoStatus status_)
 {
   {
     std::lock_guard<std::mutex> paramReadyLock{paramReadyControl};
     status = status_;
-    LOGD("ParamReadUtil::statusCb: Callback received, code = %d\n", static_cast<int>(status_));
+    LOGD("ParamGetter::statusCb: Callback received, code = %d\n", static_cast<int>(status_));
   }
   paramReady.notify_all();
 }
 
-ParamReadUtil::Result ParamReadUtil::get(ParamId paramId)
+ParamGetter::Result ParamGetter::get(ParamId paramId)
 {
   status = IoStatus::error;
   Result result{IoStatus::error, 0};
 
   auto param = paramGenerator->generate(paramId);
-  if (param == nullptr)
+  if (!param)
   {
+    LOGE("ParamGetter::get: Cannot generate param with ID: %d\n", static_cast<int>(paramId));
     return result;
   }
 
@@ -48,9 +52,9 @@ ParamReadUtil::Result ParamReadUtil::get(ParamId paramId)
   paramReader->read(param, this);
   paramReady.wait(paramReadyLock);
 
+  result.ioStatus = status;
   if (status == IoStatus::ok)
   {
-    result.ioStatus = status;
     result.value = param->getValue();
   }
 

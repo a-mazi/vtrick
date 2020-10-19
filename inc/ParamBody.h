@@ -15,6 +15,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -41,3 +42,6 @@ private:
   float       value;
   ParamTraits paramTraits;
 };
+
+using ParamBodyPtr = std::shared_ptr<ParamBody>;
+using ConstParamBodyPtr = std::shared_ptr<const ParamBody>;

@@ -57,6 +57,7 @@ void P300Packet::prepareWriteRequest(uint16_t paramAddress, uint8_t paramSize, i
 
 IoStatus P300Packet::send(std::function<IoStatus(const void*, size_t)> sink) const
 {
+  assert(sink);
   auto ioStatus = IoStatus::error;
   size_t packetSize = sizeof(Type) + sizeof(uint8_t) + getDataSize() + sizeof(uint8_t);
   if (packetSize > maxBufferSize)
@@ -70,6 +71,7 @@ IoStatus P300Packet::send(std::function<IoStatus(const void*, size_t)> sink) con
 
 IoStatus P300Packet::receive(std::function<IoStatus(void*, size_t)> source)
 {
+  assert(source);
   auto ioStatus = IoStatus::error;
 
   ioStatus = receiveHeader(source);

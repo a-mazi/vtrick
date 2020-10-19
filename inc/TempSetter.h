@@ -17,28 +17,19 @@
 
 #include <thread>
 #include <atomic>
-#include <condition_variable>
-#include <Manipulator.h>
-#include <ParamWriter.h>
-#include <ParamGenerator.h>
+#include <ParamSetter.h>
 
-class TempSetter : public Manipulator, public ParamReadWriteCallback
+class TempSetter
 {
 public:
   TempSetter() = delete;
-  TempSetter(const ParamGeneratorPtr& paramGenerator, const ParamWriterPtr& paramWriter);
-  ~TempSetter() = default;
+  TempSetter(ParamSetterPtr&& paramSetter);
 
-  void start() final;
-  void stop() final;
-  void statusCb(IoStatus status) final;
+  void start();
+  void stop();
 
 private:
-  ParamGeneratorPtr paramGenerator;
-  ParamWriterPtr paramWriter;
-  std::condition_variable paramReady;
-  std::mutex paramReadyControl;
-  IoStatus status;
+  ParamSetterPtr paramSetter;
 
   std::mutex processingControl;
   std::atomic_bool doProcessing;
@@ -46,6 +37,6 @@ private:
 
   static constexpr int tempWriteInterval = 3000; // in milliseconds
 
-  void checkStatus();
+  void checkStatus(IoStatus status);
   void mainLoop();
 };

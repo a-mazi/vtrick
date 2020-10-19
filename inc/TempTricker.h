@@ -15,28 +15,48 @@
  */
 #pragma once
 
-#include <thread>
+#include <mutex>
 #include <atomic>
+#include <thread>
 #include <ParamGetter.h>
+#include <ParamSetter.h>
 
-class TempMonitor
+class TempTricker
 {
 public:
-  TempMonitor() = delete;
-  TempMonitor(ParamGetterPtr&& paramGetter);
+  TempTricker() = delete;
+  TempTricker(ParamGetterPtr&& paramGetter, ParamSetterPtr&& paramSetter);
 
   void start();
   void stop();
 
 private:
+  enum class HeatingState;
+
   ParamGetterPtr paramGetter;
+  ParamSetterPtr paramSetter;
 
   std::mutex processingControl;
   std::atomic_bool doProcessing;
   std::thread mainLoopThread;
 
-  static constexpr int tempReadInterval = 3000; // in milliseconds
+  HeatingState heatingState;
+  static constexpr int stateCheckInterval = 5000; // in milliseconds
+  static constexpr int heatingStabilizeTime = 90; // in seconds
+  static constexpr float trickingTemp = 37; // degrees Celsius
 
-  void checkParamValue(const char* paramString, ParamGetter::Result result);
+  float currentBurnerPower;
+
+  bool isHeatingIdle();
+  void trickHeattingSettings();
+  float trickParam(ParamId paramToTrick);
+  void restoreParam(ParamId paramToTrick, float savedValue);
   void mainLoop();
+};
+
+enum class TempTricker::HeatingState
+{
+  idle,
+  starting,
+  running,
 };

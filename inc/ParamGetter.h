@@ -15,14 +15,36 @@
  */
 #pragma once
 
-#include <memory>
-#include <ParamBody.h>
-#include <ParamReadWriteCallback.h>
+#include <thread>
+#include <condition_variable>
+#include <ParamGenerator.h>
+#include <ParamReader.h>
 
-class ParamWriter
+class ParamGetter : public ParamReadWriteCallback
 {
 public:
-  virtual void write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) = 0;
+  struct Result;
+
+  ParamGetter() = delete;
+  ParamGetter(const ParamGeneratorPtr& paramGenerator, const ParamReaderPtr& paramReader);
+  ~ParamGetter() = default;
+
+  void statusCb(IoStatus status) final;
+
+  Result get(ParamId paramId);
+
+private:
+  ParamGeneratorPtr paramGenerator;
+  ParamReaderPtr paramReader;
+  std::condition_variable paramReady;
+  std::mutex paramReadyControl;
+  IoStatus status;
 };
 
-using ParamWriterPtr = std::shared_ptr<ParamWriter>;
+using ParamGetterPtr = std::shared_ptr<ParamGetter>;
+
+struct ParamGetter::Result
+{
+  IoStatus ioStatus;
+  float    value;
+};

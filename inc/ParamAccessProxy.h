@@ -36,8 +36,8 @@ public:
                    int64_t retentionTime = 1000 /* milliseconds */);
   ~ParamAccessProxy() = default;
 
-  void read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
-  void write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
+  void read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
+  void write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
   void statusCb(IoStatus status) final;
 
 private:
@@ -53,7 +53,7 @@ private:
 
 struct ParamAccessProxy::ParamQueue
 {
-  std::shared_ptr<ParamBody> paramBody;
+  ParamBodyPtr paramBody;
   ParamReadWriteCallback* callback;
 };
 

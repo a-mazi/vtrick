@@ -36,8 +36,8 @@ public:
   IoStatus init();
   void start();
   void stop();
-  void read(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
-  void write(std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback) final;
+  void read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
+  void write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
 
 private:
   enum class Action;
@@ -59,11 +59,11 @@ private:
   std::condition_variable taskReady;
   static constexpr int taskWaitTime = 500; // in milliseconds
 
-  void addTaskToQueue(Action action, std::shared_ptr<ParamBody>& paramBody, ParamReadWriteCallback* callback);
+  void addTaskToQueue(Action action, const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback);
 
-  IoStatus readParam(std::shared_ptr<ParamBody>& paramBody);
-  IoStatus writeParam(const std::shared_ptr<ParamBody>& paramBody);
-  IoStatus sendReceive(const std::shared_ptr<P300Packet>& request, std::shared_ptr<P300Packet>& response);
+  IoStatus readParam(const ParamBodyPtr& paramBody);
+  IoStatus writeParam(const ConstParamBodyPtr& paramBody);
+  IoStatus sendReceive(const ConstP300PacketPtr& request, const P300PacketPtr& response);
 
   void mainLoop();
 };
@@ -77,6 +77,6 @@ enum class P300Protocol::Action
 struct P300Protocol::Task
 {
   Action action;
-  std::shared_ptr<ParamBody> paramBody;
+  ParamBodyPtr paramBody;
   ParamReadWriteCallback* callback;
 };

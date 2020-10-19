@@ -13,36 +13,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-#pragma once
+#include <IoStatus.h>
 
-#include <thread>
-#include <condition_variable>
-#include <ParamGenerator.h>
-#include <ParamReader.h>
-
-class ParamReadUtil : public ParamReadWriteCallback
+const std::map<IoStatus, std::string> ioStatusName =
 {
-public:
-  struct Result;
-
-  ParamReadUtil() = delete;
-  ParamReadUtil(const ParamGeneratorPtr& paramGenerator, const ParamReaderPtr& paramReader);
-  ~ParamReadUtil() = default;
-
-  void statusCb(IoStatus status) final;
-
-  Result get(ParamId paramId);
-
-private:
-  ParamGeneratorPtr paramGenerator;
-  ParamReaderPtr paramReader;
-  std::condition_variable paramReady;
-  std::mutex paramReadyControl;
-  IoStatus status;
-};
-
-struct ParamReadUtil::Result
-{
-  IoStatus ioStatus;
-  float    value;
+ {IoStatus::ok,      "ok"},
+ {IoStatus::error,   "error"},
+ {IoStatus::timeout, "timeout"},
 };

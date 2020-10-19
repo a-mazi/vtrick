@@ -68,16 +68,17 @@ bool ParamGenerator::setControllerId(ControllerId controllerId_)
   }
 }
 
-std::shared_ptr<ParamBody> ParamGenerator::generate(ParamId paramId) const
+ParamBodyPtr ParamGenerator::generate(ParamId paramId) const
 {
+  ParamBodyPtr paramBodyPtr{};
   if (isParamIdAvailable(paramId))
   {
-    return std::make_shared<ParamBody>(paramDefinition.at(controllerId).at(paramId));
+    paramBodyPtr = std::make_shared<ParamBody>(paramDefinition.at(controllerId).at(paramId));
   }
   else
   {
     LOGE("ParamGenerator::generate: Parameter Id %04X for controller Id %u is not available in the parameter definitions!\n",
          static_cast<uint16_t>(paramId), static_cast<uint16_t>(controllerId));
-    return nullptr;
   }
+  return paramBodyPtr;
 }

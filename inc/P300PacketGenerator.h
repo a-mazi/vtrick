@@ -15,13 +15,12 @@
  */
 #pragma once
 
-#include <memory>
 #include <P300Packet.h>
 
 class P300PacketGenerator
 {
 public:
-  std::shared_ptr<P300Packet> generate() const;
+  P300PacketPtr generate() const;
 };
 
 using P300PacketGeneratorPtr = std::shared_ptr<P300PacketGenerator>;

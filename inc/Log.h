@@ -16,27 +16,30 @@
 #pragma once
 
 #include <stdio.h>
+#include <string>
+
+std::string timestamp();
 
 #if LOGLEVEL>=1
-#define LOGE(...) printf("ERROR "); printf(__VA_ARGS__);
+#define LOGE(...) printf("%s ERROR   ", timestamp().c_str()); printf(__VA_ARGS__);
 #else
 #define LOGE(...)
 #endif
 
 #if LOGLEVEL>=2
-#define LOGW(...) printf("WARNING "); printf(__VA_ARGS__);
+#define LOGW(...) printf("%s WARNING ", timestamp().c_str()); printf(__VA_ARGS__);
 #else
 #define LOGW(...)
 #endif
 
 #if LOGLEVEL>=3
-#define LOGI(...) printf("INFO "); printf(__VA_ARGS__);
+#define LOGI(...) printf("%s INFO    ", timestamp().c_str()); printf(__VA_ARGS__);
 #else
 #define LOGI(...)
 #endif
 
 #if LOGLEVEL>=4
-#define LOGD(...) printf("DEBUG "); printf(__VA_ARGS__);
+#define LOGD(...) printf("%s DEBUG   ", timestamp().c_str()); printf(__VA_ARGS__);
 #else
 #define LOGD(...)
 #endif
