@@ -15,6 +15,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <IoStatus.h>
 
 class ParamReadWriteCallback
@@ -22,3 +23,6 @@ class ParamReadWriteCallback
 public:
   virtual void statusCb(IoStatus status) = 0;
 };
+
+using ParamReadWriteCallbackPtr = std::shared_ptr<ParamReadWriteCallback>;
+using ParamReadWriteCallbackWeakPtr = std::weak_ptr<ParamReadWriteCallback>;

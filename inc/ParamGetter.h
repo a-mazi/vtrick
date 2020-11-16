@@ -20,7 +20,7 @@
 #include <ParamGenerator.h>
 #include <ParamReader.h>
 
-class ParamGetter : public ParamReadWriteCallback
+class ParamGetter : public ParamReadWriteCallback, public std::enable_shared_from_this<ParamReadWriteCallback>
 {
 public:
   struct Result;

@@ -89,19 +89,19 @@ void P300Protocol::stop()
   }
 }
 
-void P300Protocol::read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
+void P300Protocol::read(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback)
 {
   assert(paramBody);
   addTaskToQueue(Action::read, paramBody, callback);
 }
 
-void P300Protocol::write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
+void P300Protocol::write(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback)
 {
   assert(paramBody);
   addTaskToQueue(Action::write, paramBody, callback);
 }
 
-void P300Protocol::addTaskToQueue(Action action, const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
+void P300Protocol::addTaskToQueue(Action action, const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback)
 {
   {
     std::lock_guard<std::mutex> taskQueueLock{taskQueueControl};
@@ -225,7 +225,11 @@ void P300Protocol::mainLoop()
       {
         IoStatus = writeParam(task.paramBody);
       }
-      task.callback->statusCb(IoStatus);
+      auto callback = task.callbackLink.lock();
+      if (callback)
+      {
+        callback->statusCb(IoStatus);
+      }
 
       taskQueueLock.lock();
     }

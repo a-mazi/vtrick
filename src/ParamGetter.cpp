@@ -49,7 +49,7 @@ ParamGetter::Result ParamGetter::get(ParamId paramId)
   }
 
   std::unique_lock<std::mutex> paramReadyLock{paramReadyControl};
-  paramReader->read(param, this);
+  paramReader->read(param, shared_from_this());
   paramReady.wait(paramReadyLock);
 
   result.ioStatus = status;

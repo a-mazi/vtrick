@@ -22,7 +22,7 @@
 class ParamReader
 {
 public:
-  virtual void read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) = 0;
+  virtual void read(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback) = 0;
 };
 
 using ParamReaderPtr = std::shared_ptr<ParamReader>;

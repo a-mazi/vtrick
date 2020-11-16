@@ -48,7 +48,7 @@ IoStatus ParamSetter::set(ParamId paramId, float value)
   param->setValue(value);
 
   std::unique_lock<std::mutex> paramReadyLock{paramReadyControl};
-  paramWriter->write(param, this);
+  paramWriter->write(param, shared_from_this());
   paramReady.wait(paramReadyLock);
 
   return status;

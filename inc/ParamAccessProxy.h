@@ -25,7 +25,8 @@
 #include <ParamWriter.h>
 #include <ParamReadWriteCallback.h>
 
-class ParamAccessProxy : public ParamReader, public ParamWriter, public ParamReadWriteCallback
+class ParamAccessProxy : public ParamReader, public ParamWriter, public ParamReadWriteCallback,
+                         public std::enable_shared_from_this<ParamReadWriteCallback>
 {
 public:
   struct ParamQueue;
@@ -36,8 +37,8 @@ public:
                    int64_t retentionTime = 1000 /* milliseconds */);
   ~ParamAccessProxy() = default;
 
-  void read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
-  void write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
+  void read(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback) final;
+  void write(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback) final;
   void statusCb(IoStatus status) final;
 
 private:
@@ -54,7 +55,7 @@ private:
 struct ParamAccessProxy::ParamQueue
 {
   ParamBodyPtr paramBody;
-  ParamReadWriteCallback* callback;
+  ParamReadWriteCallbackWeakPtr callbackLink;
 };
 
 struct ParamAccessProxy::ParamHistory

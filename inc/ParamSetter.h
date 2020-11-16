@@ -20,7 +20,7 @@
 #include <ParamGenerator.h>
 #include <ParamWriter.h>
 
-class ParamSetter: public ParamReadWriteCallback
+class ParamSetter: public ParamReadWriteCallback, public std::enable_shared_from_this<ParamReadWriteCallback>
 {
 public:
   ParamSetter() = delete;

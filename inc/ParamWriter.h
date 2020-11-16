@@ -22,7 +22,7 @@
 class ParamWriter
 {
 public:
-  virtual void write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) = 0;
+  virtual void write(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback) = 0;
 };
 
 using ParamWriterPtr = std::shared_ptr<ParamWriter>;

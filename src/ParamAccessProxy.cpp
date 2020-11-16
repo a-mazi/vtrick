@@ -27,7 +27,7 @@ ParamAccessProxy::ParamAccessProxy(const ParamReaderPtr& paramReader_, const Par
   assert(paramWriter);
 }
 
-void ParamAccessProxy::read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
+void ParamAccessProxy::read(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback)
 {
   assert(paramBody);
   std::lock_guard<std::mutex> synchoLock{synchronizer};
@@ -41,21 +41,21 @@ void ParamAccessProxy::read(const ParamBodyPtr& paramBody, ParamReadWriteCallbac
     {
       LOGD("ParamAccessProxy::read: Read parameter 0x%04X from history\n", paramAddress);
       *paramBody = paramHistory.paramBody;
-      std::thread callbackThead{&ParamReadWriteCallback::statusCb, callback, IoStatus::ok};
+      std::thread callbackThead{&ParamReadWriteCallback::statusCb, callback.get(), IoStatus::ok};
       callbackThead.detach();
       return;
     }
   }
   paramQueue.push({paramBody, callback});
-  paramReader->read(paramBody, this);
+  paramReader->read(paramBody, shared_from_this());
 }
 
-void ParamAccessProxy::write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback)
+void ParamAccessProxy::write(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback)
 {
   assert(paramBody);
   std::lock_guard<std::mutex> synchoLock{synchronizer};
   paramQueue.push({paramBody, callback});
-  paramWriter->write(paramBody, this);
+  paramWriter->write(paramBody, shared_from_this());
 }
 
 void ParamAccessProxy::statusCb(IoStatus status)
@@ -65,19 +65,23 @@ void ParamAccessProxy::statusCb(IoStatus status)
   auto param = paramQueue.front();
   paramQueue.pop();
 
-  if (status == IoStatus::ok)
+  auto callback = param.callbackLink.lock();
+  if (callback)
   {
-    uint16_t     paramAddress = param.paramBody->getParamAddress();
-    auto         currentTime = std::chrono::high_resolution_clock::now();
-    ParamHistory paramHistory{ParamBody{*param.paramBody}, currentTime};
-    if (paramMemory.count(paramAddress) > 0)
+    if (status == IoStatus::ok)
     {
-      paramMemory.at(paramAddress) = paramHistory;
+      uint16_t     paramAddress = param.paramBody->getParamAddress();
+      auto         currentTime = std::chrono::high_resolution_clock::now();
+      ParamHistory paramHistory{ParamBody{*param.paramBody}, currentTime};
+      if (paramMemory.count(paramAddress) > 0)
+      {
+        paramMemory.at(paramAddress) = paramHistory;
+      }
+      else
+      {
+        paramMemory.insert({paramAddress, paramHistory});
+      }
     }
-    else
-    {
-      paramMemory.insert({paramAddress, paramHistory});
-    }
+    callback->statusCb(status);
   }
-  param.callback->statusCb(status);
 }

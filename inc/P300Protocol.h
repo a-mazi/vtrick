@@ -36,8 +36,8 @@ public:
   IoStatus init();
   void start();
   void stop();
-  void read(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
-  void write(const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback) final;
+  void read(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback) final;
+  void write(const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback) final;
 
 private:
   enum class Action;
@@ -59,7 +59,7 @@ private:
   std::condition_variable taskReady;
   static constexpr int taskWaitTime = 500; // in milliseconds
 
-  void addTaskToQueue(Action action, const ParamBodyPtr& paramBody, ParamReadWriteCallback* callback);
+  void addTaskToQueue(Action action, const ParamBodyPtr& paramBody, const ParamReadWriteCallbackPtr& callback);
 
   IoStatus readParam(const ParamBodyPtr& paramBody);
   IoStatus writeParam(const ConstParamBodyPtr& paramBody);
@@ -78,5 +78,5 @@ struct P300Protocol::Task
 {
   Action action;
   ParamBodyPtr paramBody;
-  ParamReadWriteCallback* callback;
+  ParamReadWriteCallbackWeakPtr callbackLink;
 };
