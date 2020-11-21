@@ -39,7 +39,7 @@ OBJFILES := $(OBJ_APP_MODU_RELEASE) $(RELDIR)/$(TMPDIR)/$(APPDIR)/*.o \
                                     $(DEBDIR)/$(TMPDIR)/$(TRYDIR)/*.o
 DEPFILES := $(OBJFILES:.o=.d)
 
-RELEASE   := \"$(shell echo `git log --date=short --pretty='%ad_%h' -1``git status -s` | sed s/\\s/_/g)\"
+RELEASE  := \"$(shell echo `git log --date=short --pretty='%ad_%h' -1``git status -s` | sed s/\\s/_/g | sed s/\>/_/g)\"
 
 CXXFLAGS := -Wall -c -fmessage-length=0 -std=c++17 -MMD -MP
 LNKFLAGS := -pthread
@@ -62,13 +62,24 @@ app_debug:   $(BIN_TRYOUTS)
 ut:          CXXFLAGS += -DLOGLEVEL=4 -DUT_BUILD
 ut:          $(BIN_UT)
 
+cov:         CXXFLAGS += --coverage
+cov:         LNKFLAGS += --coverage
+cov:         app_debug
+
 utcov:       CXXFLAGS += --coverage
 utcov:       LNKFLAGS += --coverage
 utcov:       ut
 	$(BIN_UT)
+
+covreport:
 	@mkdir -p $(DEBDIR)/$(COVDIR)
 	lcov --rc lcov_branch_coverage=1 --capture --directory $(DEBDIR)/$(TMPDIR) --output-file $(DEBDIR)/$(COVDIR)/coverage.info
+	lcov --rc lcov_branch_coverage=1 --remove $(DEBDIR)/$(COVDIR)/coverage.info --output-file $(DEBDIR)/$(COVDIR)/coverage.info '*/inc/*' '/usr/*' '*/mo/*'
 	genhtml $(DEBDIR)/$(COVDIR)/coverage.info --branch-coverage --output-directory $(DEBDIR)/$(COVDIR)
+
+prof:       CXXFLAGS += -pg
+prof:       LNKFLAGS += -pg
+prof:       app_debug
 
 
 $(RELDIR)/%: $(OBJ_APP_MODU_RELEASE) $(RELDIR)/$(TMPDIR)/$(APPDIR)/%.o
