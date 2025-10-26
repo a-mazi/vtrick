@@ -40,13 +40,6 @@ Build dependencies
 
 -   lcov - for unit test coverage report
 
-Known issues
-------------
-
-Initialization of the serial port is not always working properly. This
-will be solved with coming commits. In the meantime the serial port can
-be bootstrapped with the below credited software.
-
 Credits
 -------
 
