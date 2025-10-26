@@ -26,6 +26,7 @@ public:
   ~SerialPort() = default;
 
   virtual void openSerial();
+  virtual void configSerial();
   virtual void closeSerial();
   virtual ssize_t readSerial(void* buffer, size_t dataSize);
   virtual ssize_t writeSerial(const void* buffer, size_t dataSize);

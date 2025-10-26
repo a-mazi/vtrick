@@ -43,6 +43,7 @@ void KettlePort::open()
   if (serial)
   {
     serial->openSerial();
+    serial->configSerial();
   }
 }
 

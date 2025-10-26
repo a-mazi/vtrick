@@ -22,6 +22,7 @@ class SerialMock : public SerialPort
 {
 public:
   MOCK_METHOD(void, openSerial, (), (final));
+  MOCK_METHOD(void, configSerial, (), (final));
   MOCK_METHOD(void, closeSerial, (), (final));
   MOCK_METHOD(ssize_t, readSerial, (void*, size_t), (final));
   MOCK_METHOD(ssize_t, writeSerial, (const void*, size_t), (final));
